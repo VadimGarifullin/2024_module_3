@@ -1,0 +1,35 @@
+---
+- name: Deploy App to Web
+  hosts: WEB
+  become: yes
+  vars:
+    env: 'test'
+    project_name: 'test-project'
+
+  tasks:
+  - name: Update repos
+    apt_rpm:
+      update_cache: yes
+
+  - name: tmp resize
+    shell: mount -o remount,size=2G /tmp
+
+  - name: Install packages
+    apt_rpm: name={{ item }}
+    loop: ["python3-module-pip", "docker-engine"]
+
+  - name: docker enable
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+
+  - name: hello-world
+    community.docker.docker_container:
+      name: nginx
+      image: nginx
+      state: started
+      restart: true
+      ports:
+        - 80:80
+
