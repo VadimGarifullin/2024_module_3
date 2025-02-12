@@ -5,6 +5,10 @@
   vars:
     env: 'test'
     project_name: 'test-project'
+    repo_url: "https://github.com/auteam-usr/moscow39"
+    registry_server: "localhost:5000"
+    docker_image: "app1"
+    registry_port: "5000"
 
   tasks:
   - name: Update repos
@@ -16,7 +20,7 @@
 
   - name: Install packages
     apt_rpm: name={{ item }}
-    loop: ["python3-module-pip", "docker-engine"]
+    loop: ["python3-module-pip", "docker-engine", "git"]
 
   - name: docker enable
     systemd:
@@ -24,12 +28,33 @@
       state: started
       enabled: true
 
-  - name: hello-world
-    community.docker.docker_container:
-      name: nginx
-      image: nginx
-      state: started
-      restart: true
-      ports:
-        - 80:80
+#  - name: Start local Docker registry
+#    ansible.builtin.shell: |
+#      docker run -d --name registry --restart=always -p {{ registry_port }}:5000 registry:2
+#    args:
+#      creates: "/var/lib/docker/containers/registry"
+
+  - name: Clone the repository
+    ansible.builtin.git:
+      repo: "{{ repo_url }}"
+      dest: "/tmp/app1"
+      force: yes
+
+  - name: Build Docker image
+    ansible.builtin.shell: |
+      cd /tmp/app1
+      docker build -t {{ registry_server }}/{{ docker_image }}:latest .
+
+  - name: Push Docker image to local registry
+    ansible.builtin.shell: |
+      docker push {{ registry_server }}/{{ docker_image }}:latest
+
+  - name: Pull image from local registry
+    ansible.builtin.shell: |
+      docker pull {{ registry_server }}/{{ docker_image }}:latest
+
+  - name: Run App1 container
+    ansible.builtin.shell: |
+      docker run -d --name app1 -p 80:5000 {{ registry_server }}/{{ docker_image }}:latest
+
 
