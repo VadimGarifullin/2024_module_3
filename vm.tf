@@ -105,12 +105,18 @@ resource "vkcs_networking_port" "WEB1_port" {
   name       = "WEB1_port"
   network_id = vkcs_networking_network.app.id
   security_group_ids = [vkcs_networking_secgroup.admin.id]
+  fixed_ip {
+    subnet_id = vkcs_networking_subnet.app.id
+  }
 }
 
 resource "vkcs_networking_port" "WEB2_port" {
   name       = "WEB2_port"
   network_id = vkcs_networking_network.app.id
   security_group_ids = [vkcs_networking_secgroup.admin.id]
+  fixed_ip {
+    subnet_id = vkcs_networking_subnet.app.id
+  }
 }
 
 
