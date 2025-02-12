@@ -28,11 +28,11 @@
       state: started
       enabled: true
 
-#  - name: Start local Docker registry
-#    ansible.builtin.shell: |
-#      docker run -d --name registry --restart=always -p {{ registry_port }}:5000 registry:2
-#    args:
-#      creates: "/var/lib/docker/containers/registry"
+  - name: Start local Docker registry
+    ansible.builtin.shell: |
+      docker run -d --name registry --restart=always -p {{ registry_port }}:5000 registry:2
+    args:
+      creates: "/var/lib/docker/containers/registry"
 
   - name: Clone the repository
     ansible.builtin.git:
