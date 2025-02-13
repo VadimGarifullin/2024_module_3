@@ -1,57 +1,86 @@
-# 2024_module_3
-как запустить:
-подставить свои данные в provider.tf, должен быть /home/altlinux/, создать ssh ключ и изменить его названия в vm.tf и cloudinit.sh
-включить доступ к api, нужно включить 2fa
+# 2024 Module 3
 
-#Установка terraform
+## 🚀 Как запустить
 
+1. Подставить свои данные в `provider.tf`. Должен быть путь `/home/altlinux/`.
+2. Создать SSH-ключ и изменить его название в `vm.tf` и `cloudinit.sh`.
+3. Включить доступ к API (необходимо активировать **2FA**).
+
+---
+
+## 🛠 Установка Terraform
+
+```sh
 curl -O https://hashicorp-releases.mcs.mail.ru/terraform/1.7.1/terraform_1.7.1_linux_amd64.zip
 
 sudo apt-get update
-
 sudo apt-get install unzip -y
 
 unzip terraform*
-
 sudo mv terraform /usr/bin/
+```
 
+---
 
-2. Установка провайдера VKCS
+## 🌐 Установка провайдера VKCS
 
-скачиваем из настройки проекта два файла для terraform
+1. Скачайте из **настроек проекта** два файла для Terraform.
+2. Файл `vkcs_provider.tf` скопируйте в `/home/altlinux/`.
+3. Создайте файл `~/.terraformrc`:
 
-vkcs_provider.tf копируем в корень /home/altlinux/
+   ```sh
+   touch ~/.terraformrc
+   ```
 
-terraform.rc:
+4. Инициализируйте Terraform:
 
-touch ~/.terraformrc
+   ```sh
+   terraform init
+   ```
 
+---
 
-terraform init
+## 📦 Установка OpenStack CLI
 
-
-установка openstack cli
+```sh
 sudo apt-get install python3-module-pip
 sudo pip3 install python-openstackclient
+```
 
-из настроек проекта скачать openrc, вписать свой пароль
+1. Из настроек проекта скачайте **OpenRC-файл**.
+2. Впишите свой пароль.
+3. Загрузите OpenRC:
 
-source openrc
+   ```sh
+   source openrc
+   ```
 
-openstack image list --public | grep -i Alt
+4. Проверьте доступные образы:
 
+   ```sh
+   openstack image list --public | grep -i Alt
+   ```
 
+---
 
+## 🐳 Установка и настройка Docker
 
-
-####Docker Control
+```sh
 sudo apt-get install docker-engine
 sudo systemctl enable --now docker
+```
 
-#решение проблемы не хватки места в tmpfs
+### 🔧 Решение проблемы нехватки места в `/tmp`
+
+```sh
 mount -o remount,size=2G /tmp
+```
 
+### 📦 Установка коллекции Ansible для Docker
+
+```sh
 ansible-galaxy collection install community.docker
+```
 
 
 
